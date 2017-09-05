@@ -31,20 +31,16 @@
 
 namespace Chance\PhpTimeElapsed\Test;
 
+use Chance\PhpTimeElapsed\Service\TimeElapsedService;
+use Chance\PhpTimeElapsed\Service\TimeElapsedServiceInterface;
 use PHPUnit\Framework\TestCase;
 
 class TestTimeElapsedService extends TestCase
 {
-    /**
-     * Throw an exception for no \DateInterval set
-     *
-     * @expectedException \LogicException
-     */
-    public function testServiceThrowsExceptionIfDateIntervalNotSet()
+    public function testImplementeInterface()
     {
         $service = new TimeElapsedService();
-        $service->hasDaysElapsed(1);
-        $this->fail('Expected exception was not triggered. please validate logic');
+        $this->assertInstanceOf(TimeElapsedServiceInterface::class, $service);
     }
 
     /**
@@ -58,7 +54,7 @@ class TestTimeElapsedService extends TestCase
         $end16 = new \DateTime("2016-12-31");
 
         $diff = $end16->diff($start16);
-        $service = new TimeElapsedService($diff);
+        new TimeElapsedService($diff);
     }
 
     /**
@@ -77,6 +73,31 @@ class TestTimeElapsedService extends TestCase
     }
 
     /**
+     * Throw an exception for no \DateInterval set
+     *
+     * @expectedException \LogicException
+     */
+    public function testServiceThrowsExceptionIfDateIntervalNotSet()
+    {
+        $service = new TimeElapsedService();
+        $service->hasTimeElapsed(1, 'days');
+        $this->fail('Expected exception was not triggered. please validate logic');
+    }
+
+    /**
+     * @expectedException \LogicException
+     */
+    public function testServiceThrowExceptionForNonNumericAmountValue()
+    {
+        $start16 = new \DateTime("2016-01-01");
+        $end16 = new \DateTime("2016-12-31");
+
+        $diff = $start16->diff($end16);
+        $service = new TimeElapsedService($diff);
+        $service->hasTimeElapsed("kittens", 'year');
+    }
+
+    /**
      * @expectedException \UnexpectedValueException
      */
     public function testServiceHasTimeElapsedThrowsExceptionForZero()
@@ -85,7 +106,7 @@ class TestTimeElapsedService extends TestCase
         $end16 = new \DateTime("2016-12-31");
 
         $diff = $start16->diff($end16);
-        $service = new TimeElapsedService();
+        $service = new TimeElapsedService($diff);
         $service->hasTimeElapsed(0, 'year');
     }
 
@@ -98,8 +119,30 @@ class TestTimeElapsedService extends TestCase
         $end16 = new \DateTime("2016-12-31");
 
         $diff = $start16->diff($end16);
-        $service = new TimeElapsedService();
+        $service = new TimeElapsedService($diff);
         $service->hasTimeElapsed(-1, 'year');
+    }
+
+    public function testServiceHasValidTimeUnits()
+    {
+        $expected = [
+            'year',
+            'years',
+            'month',
+            'months',
+            'week',
+            'weeks',
+            'day',
+            'days',
+            'hour',
+            'hours',
+            'minute',
+            'minutes',
+            'second',
+            'seconds',
+        ];
+
+        $this->assertSame($expected,TimeElapsedService::VALID_TIME_UNITS);
     }
 
     /**
@@ -111,8 +154,13 @@ class TestTimeElapsedService extends TestCase
         $end16 = new \DateTime("2016-12-31");
 
         $diff = $start16->diff($end16);
-        $service = new TimeElapsedService();
-        $service->hasTimeElapsed(1, 'monkeys');
+        $service = new TimeElapsedService($diff);
+
+        $invalidTimeUnit = 'kittens';
+        if (in_array($invalidTimeUnit, TimeElapsedService::VALID_TIME_UNITS)) {
+            $this->fail($invalidTimeUnit . " is currently a valid unit of time");
+        }
+        $service->hasTimeElapsed(1, $invalidTimeUnit);
     }
 
     /**
@@ -217,7 +265,7 @@ class TestTimeElapsedService extends TestCase
         );
 
         // more than 7
-        $gt7 = 8;
+        $gt7 = 22;
         $this->assertEquals(
             (int) floor($gt7/TimeElapsedService::DAYS_PER_WEEK),
             TimeElapsedService::convertDaysToWeeks($gt7)
@@ -302,7 +350,7 @@ class TestTimeElapsedService extends TestCase
     public function testServiceHasMinutesElapsed()
     {
         $start = new \DateTime("2017-08-22 00:00:00");
-        $end = clone  $start;
+        $end = clone $start;
         $end->modify("+10 minutes");
 
         $diff = $start->diff($end);
