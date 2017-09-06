@@ -219,6 +219,7 @@ class TimeElapsedService implements TimeElapsedServiceInterface
      */
     public function getActualHours()
     {
+        // we use days because it's available and accounts for leap years
         $totalDays = $this->getInterval()->days;
         $actual = $this->getInterval()->h;
         $actual += self::convertDaysToHours($totalDays);

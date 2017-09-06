@@ -1,6 +1,6 @@
 {
   "name": "chancegarcia/php-time-elapsed",
-  "description": "library for elapsed time using DateTime and DateInterval",
+  "description": "Library for elapsed time using DateInterval. Figure out if x time has elapsed.",
   "minimum-stability": "dev",
   "license": "MIT",
   "require": {
