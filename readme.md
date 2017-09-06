@@ -1,2 +1,1 @@
-- full time ago
-- has x time elapsed?
+- full time ago?

@@ -219,9 +219,24 @@ class TestTimeElapsedService extends TestCase
         );
     }
 
+    public function testGetActualMonths()
+    {
+        $start = new \DateTime("2017-01-01");
+        $end = clone $start;
+        $end->modify("+1 year");
+        $diff = $start->diff($end);
+
+        $service = new TimeElapsedService();
+
+        $service->setInterval($diff);
+
+        $this->assertEquals(TimeElapsedService::MONTHS_PER_YEAR, $service->getActualMonths());
+    }
+
     /**
      *
      * @depends testServiceHasTimeElapsed
+     * @depends testGetActualMonths
      */
     public function testServiceHasMonthsElapsed()
     {
@@ -308,8 +323,23 @@ class TestTimeElapsedService extends TestCase
         );
     }
 
+    public function testGetActualHours()
+    {
+        $start = new \DateTime("2017-01-01");
+        $end = clone $start;
+        $end->modify("+1 day");
+        $diff = $start->diff($end);
+
+        $service = new TimeElapsedService();
+
+        $service->setInterval($diff);
+
+        $this->assertEquals(TimeElapsedService::HOURS_PER_DAY, $service->getActualHours());
+    }
+
     /**
      * @depends testServiceConvertDaysToHours
+     * @depends testGetActualHours
      */
     public function testServiceHasHoursElapsed()
     {
@@ -347,6 +377,24 @@ class TestTimeElapsedService extends TestCase
         );
     }
 
+    public function testGetActualMinutes()
+    {
+        $start = new \DateTime("2017-01-01 00:00:00");
+        $end = clone $start;
+        $end->modify("+2 hours");
+        $diff = $start->diff($end);
+
+        $service = new TimeElapsedService();
+
+        $service->setInterval($diff);
+
+        $this->assertEquals(2 * TimeElapsedService::MINUTES_PER_HOUR, $service->getActualMinutes());
+    }
+
+    /**
+     * @depends testServiceConvertHoursToMinutes
+     * @depends testGetActualMinutes
+     */
     public function testServiceHasMinutesElapsed()
     {
         $start = new \DateTime("2017-08-22 00:00:00");
@@ -382,8 +430,23 @@ class TestTimeElapsedService extends TestCase
         );
     }
 
+    public function testGetActualSeconds()
+    {
+        $start = new \DateTime("2017-01-01 00:00:00");
+        $end = clone $start;
+        $end->modify("+3 minutes");
+        $diff = $start->diff($end);
+
+        $service = new TimeElapsedService();
+
+        $service->setInterval($diff);
+
+        $this->assertEquals(3 * TimeElapsedService::SECONDS_PER_MINUTE, $service->getActualSeconds());
+    }
+
     /**
      * @depends testServiceConvertMinutesToSeconds
+     * @depends testGetActualSeconds
      */
     public function testServiceHasSecondsElapsed()
     {

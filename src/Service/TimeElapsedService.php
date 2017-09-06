@@ -106,11 +106,7 @@ class TimeElapsedService implements TimeElapsedServiceInterface
             case 'month':
                 // no break
             case 'months':
-                $actual = $this->getInterval()->m;
-                $years = $this->getInterval()->y;
-                if ($years) {
-                    $actual += self::convertYearsToMonths($years);
-                }
+                $actual = $this->getActualMonths();
                 break;
             case 'week':
                 // no break
@@ -120,26 +116,17 @@ class TimeElapsedService implements TimeElapsedServiceInterface
             case 'hour':
                 // no break
             case 'hours':
-                $actual = $this->getInterval()->h;
-                $actual += self::convertDaysToHours($totalDays);
+                $actual = $this->getActualHours();
                 break;
             case 'minute':
                 // no break
             case 'minutes':
-                $actual = $this->getInterval()->i;
-                $hours = $this->getInterval()->h;
-                $hours += self::convertDaysToHours($totalDays);
-                $actual += self::convertHoursToMinutes($hours);
+                $actual = $this->getActualMinutes();
                 break;
             case 'second':
                 // no break
             case 'seconds':
-                $actual = $this->getInterval()->s;
-                $hours = $this->getInterval()->h;
-                $hours += self::convertDaysToHours($this->getInterval()->days);
-                $minutes = $this->getInterval()->i;
-                $minutes += self::convertHoursToMinutes($hours);
-                $actual += self::convertMinutesToSeconds($minutes);
+                $actual = $this->getActualSeconds();
                 break;
             case 'day':
                 // no break
@@ -211,5 +198,55 @@ class TimeElapsedService implements TimeElapsedServiceInterface
     public function hasSecondsElapsed($amount)
     {
         return $this->hasTimeElapsed($amount, 'seconds');
+    }
+
+    /**
+     * @return int
+     */
+    public function getActualMonths()
+    {
+        $actual = $this->getInterval()->m;
+        $years = $this->getInterval()->y;
+        if ($years) {
+            $actual += self::convertYearsToMonths($years);
+        }
+
+        return $actual;
+    }
+
+    /**
+     * @return int
+     */
+    public function getActualHours()
+    {
+        $totalDays = $this->getInterval()->days;
+        $actual = $this->getInterval()->h;
+        $actual += self::convertDaysToHours($totalDays);
+
+        return $actual;
+    }
+
+    /**
+     * @return int
+     */
+    public function getActualMinutes()
+    {
+        $actual = $this->getInterval()->i;
+        $hours = $this->getActualHours();
+        $actual += self::convertHoursToMinutes($hours);
+
+        return $actual;
+    }
+
+    /**
+     * @return int
+     */
+    public function getActualSeconds()
+    {
+        $actual = $this->getInterval()->s;
+        $minutes = $this->getActualMinutes();
+        $actual += self::convertMinutesToSeconds($minutes);
+
+        return $actual;
     }
 }
