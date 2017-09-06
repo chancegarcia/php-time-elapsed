@@ -35,7 +35,7 @@ use Chance\PhpTimeElapsed\Service\TimeElapsedService;
 use Chance\PhpTimeElapsed\Service\TimeElapsedServiceInterface;
 use PHPUnit\Framework\TestCase;
 
-class TestTimeElapsedService extends TestCase
+class TimeElapsedServiceTest extends TestCase
 {
     public function testImplementeInterface()
     {
