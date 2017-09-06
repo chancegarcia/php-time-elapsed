@@ -34,18 +34,21 @@ namespace Chance\PhpTimeElapsed\Service;
 
 class TimeElapsedService implements TimeElapsedServiceInterface
 {
+    /**
+     * @var \DateInterval
+     */
+    protected $interval;
 
+    /**
+     * TimeElapsedService constructor.
+     * @param \DateInterval|null $interval
+     */
     public function __construct(\DateInterval $interval = null)
     {
         if ($interval) {
             $this->setInterval($interval);
         }
     }
-
-    /**
-     * @var \DateInterval
-     */
-    protected $interval;
 
     /**
      * @return \DateInterval
